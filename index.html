@@ -3,9 +3,14 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<meta name="description" content="Marshy Investments - Quality bicycles and spare parts in Harare. Kids bikes, mountain bikes, folding bikes, and 45+ spare parts."/>
+<meta name="description" content="Marshy Investments - Quality bicycles and spare parts in Harare. Kids bikes, mountain bikes, folding bikes, and 45+ spare parts. Shop 62, Chinhoyi St."/>
+<meta name="keywords" content="bicycles Harare, bikes for sale, spare parts, kids bikes, mountain bikes, folding bikes"/>
 <meta name="theme-color" content="#8B1A1A"/>
-<title>Marshy Investments — Bicycles Harare</title>
+<meta name="author" content="Marshy Investments"/>
+<meta property="og:title" content="Marshy Investments — Bicycles Harare"/>
+<meta property="og:description" content="Quality bicycles & spare parts in Harare. 14+ bike models, 45+ parts."/>
+<meta property="og:type" content="business.business"/>
+<title>Marshy Investments — Bicycles Harare | Quality Bikes & Parts</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
@@ -41,6 +46,20 @@
   .filter-btn{transition:all 0.2s ease;}
   .filter-btn:hover{border-color:#8B1A1A!important;background:rgba(139,26,26,0.08);}
   .filter-btn:focus-visible{outline:2px solid #8B1A1A;outline-offset:2px;border-radius:8px;}
+
+  .search-container{position:relative;width:100%;margin-bottom:28px;}
+  .search-input{width:100%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#f0ece2;padding:12px 16px;border-radius:10px;font-family:Georgia,serif;font-size:14px;transition:all 0.2s ease;}
+  .search-input:focus{background:rgba(255,255,255,0.12);border-color:rgba(139,26,26,0.5);box-shadow:0 0 0 3px rgba(139,26,26,0.1);outline:none;}
+  .search-input::placeholder{color:rgba(240,236,226,0.4);}
+
+  .search-results{position:absolute;top:100%;left:0;right:0;background:rgba(14,26,16,0.98);border:1px solid rgba(255,255,255,0.1);border-top:none;border-radius:0 0 10px 10px;max-height:400px;overflow-y:auto;z-index:50;margin-top:-1px;box-shadow:0 8px 24px rgba(0,0,0,0.4);}
+  .search-result-item{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.05);cursor:pointer;transition:background 0.15s ease;display:flex;justify-content:space-between;align-items:center;}
+  .search-result-item:hover{background:rgba(139,26,26,0.15);}
+  .search-result-item:last-child{border-bottom:none;}
+  .search-result-title{font-size:13px;color:#f0ece2;font-weight:600;}
+  .search-result-meta{font-size:11px;color:rgba(240,236,226,0.5);margin-top:2px;}
+  .search-result-price{font-size:13px;color:#e8a0a0;font-weight:700;}
+  .search-empty{padding:20px;text-align:center;color:rgba(240,236,226,0.5);font-size:13px;}
   
   a{text-decoration:none;}
   
@@ -56,19 +75,19 @@ const { useState, useRef, useEffect, useCallback, useMemo, memo } = React;
 
 const BIKES = [
   { id:1,  cat:"Kids",    name:"Tricycle",                 desc:"Perfect for toddlers. Sturdy frame, storage basket.",                  price:"$25",     tag:"Toddler",    img:"" },
-  { id:2,  cat:"Kids",    name:'12" Kids Bicycle',         desc:"Age group 2–5 yrs. Training wheels included.",                        price:"$45–$50", tag:"Starter",    img:"data:image/jpeg;base64,/9j/4AAQ" },
+  { id:2,  cat:"Kids",    name:'12" Kids Bicycle',         desc:"Age group 2–5 yrs. Training wheels included.",                        price:"$45–$50", tag:"Starter",    img:"images/kids-bike-2.jpg" },
   { id:3,  cat:"Kids",    name:'16" Kids Bicycle',         desc:"Age group 4–8 yrs. Multiple colours. Basket & rear carrier.",          price:"$50–$65", tag:"Popular",    img:"images/kids-bike-3.jpg" },
   { id:4,  cat:"Kids",    name:'20" Kids Bicycle',         desc:"Age group 6–11 yrs. Basket, carrier, training wheels available.",      price:"$60–$85", tag:"Best Seller",img:"images/kids-bike-4.jpg" },
   { id:5,  cat:"Kids",    name:'20" TJX Balloon Tyre',     desc:"Age group 6–13 yrs. Disc brakes, fat balloon tyres.",                 price:"$90",     tag:"Cool",       img:"" },
-  { id:6,  cat:"Kids",    name:'20" BMX Bike',             desc:"Age group 6–adults. Built for fun, tricks & street riding.",          price:"$90",     tag:"Fun",        img:"" },
+  { id:6,  cat:"Kids",    name:'20" BMX Bike',             desc:"Age group 6–adults. Built for fun, tricks & street riding.",          price:"$90",     tag:"Fun",        img:"images/kids-bike-6.jpg" },
   { id:7,  cat:"Adult",   name:'26" MTB (Entry)',          desc:"Solid mountain bike. Great value for Harare commuters.",              price:"$80",     tag:"Value",      img:"" },
   { id:8,  cat:"Adult",   name:'26" MTB with Carrier',     desc:"Strong rear carrier. Shimano gears. Perfect for daily use.",          price:"$85–$90", tag:"Commuter",   img:"" },
   { id:9,  cat:"Adult",   name:'26" MTB Shimano $100',     desc:"Full Shimano drivetrain. Disc brakes. Sport geometry.",               price:"$100",    tag:"Shimano",    img:"" },
   { id:10, cat:"Adult",   name:'26" MTB Shimano $130',     desc:"Premium Shimano MTB. Full suspension fork. Top spec.",                price:"$130",    tag:"Premium",    img:"" },
   { id:11, cat:"Adult",   name:"Buffalo Type (Macce)",     desc:"Classic upright city bike. Tough, reliable, timeless.",              price:"$120",    tag:"City",       img:"" },
-  { id:12, cat:"Folding", name:'26" Folding Shimano',      desc:"Folds compact. Shimano gears. Easy to store & transport.",           price:"$120",    tag:"Foldable",   img:"" },
+  { id:12, cat:"Folding", name:'26" Folding Shimano',      desc:"Folds compact. Shimano gears. Easy to store & transport.",           price:"$120",    tag:"Foldable",   img:"images/folding-bike-12.jpg" },
   { id:13, cat:"Folding", name:'26" Folding Double Shock', desc:"Full suspension folding bike. Double shock absorbers. Smooth ride.", price:"$130",    tag:"Suspension", img:"images/folding-bike-13.jpg" },
-  { id:14, cat:"Folding", name:'26" Folding Meg Wheel',    desc:"Premium mag wheels. Full suspension. Top of the range.",             price:"$160",    tag:"Top Range",  img:"" },
+  { id:14, cat:"Folding", name:'26" Folding Meg Wheel',    desc:"Premium mag wheels. Full suspension. Top of the range.",             price:"$160",    tag:"Top Range",  img:"images/folding-bike-14.jpg" },
 ];
 
 const SPARES = [
@@ -155,6 +174,40 @@ const Message = memo(({message, renderText}) => (
   </div>
 ));
 Message.displayName = "Message";
+
+const SearchBar = memo(({query, setQuery, searchResults, onSelectItem}) => {
+  const {bikes, spares} = searchResults;
+  return (
+    <div className="search-container">
+      <input type="search" className="search-input" placeholder="🔍 Search bikes, parts, categories..." value={query} onChange={e=>setQuery(e.target.value)} aria-label="Search products"/>
+      {query.trim() && (
+        <div className="search-results">
+          {bikes.length > 0 && bikes.map(bike=>(
+            <div key={`bike-${bike.id}`} className="search-result-item" onClick={()=>onSelectItem(bike)}>
+              <div><div className="search-result-title">🚲 {bike.name}</div><div className="search-result-meta">{bike.cat} • {bike.tag}</div></div>
+              <div className="search-result-price">{bike.price}</div>
+            </div>
+          ))}
+          {spares.length > 0 && spares.map((spare,idx)=>(
+            <div key={`spare-${idx}`} className="search-result-item"><div><div className="search-result-title">🔧 {spare.name}</div><div className="search-result-meta">{spare.cat}</div></div><div className="search-result-price">{spare.price}</div></div>
+          ))}
+          {!bikes.length && !spares.length && <div className="search-empty">No results found. Try different keywords!</div>}
+        </div>
+      )}
+    </div>
+  );
+});
+SearchBar.displayName = "SearchBar";
+
+const useSearch = (query) => {
+  return useMemo(() => {
+    if (!query.trim()) return {bikes:[], spares:[], hasResults:false};
+    const lowerQuery = query.toLowerCase();
+    const bikes = BIKES.filter(b => b.name.toLowerCase().includes(lowerQuery) || b.desc.toLowerCase().includes(lowerQuery) || b.tag.toLowerCase().includes(lowerQuery) || b.cat.toLowerCase().includes(lowerQuery));
+    const spares = SPARES.filter(s => s.name.toLowerCase().includes(lowerQuery) || s.cat.toLowerCase().includes(lowerQuery));
+    return {bikes, spares, hasResults: bikes.length > 0 || spares.length > 0};
+  }, [query]);
+};
 
 const ChatBot = memo(({onClose}) => {
   const [msgs, setMsgs] = useState([{role:"assistant",text:"👋 Hello! I'm **Spoke**, your guide at Marshy Investments.\n\nAsk me about bikes, prices, spare parts, or let me help you find the right bike!"}]);
@@ -284,11 +337,13 @@ function App() {
   const [section, setSection] = useState("home");
   const [filter, setFilter] = useState("All");
   const [chat, setChat] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const cats = useMemo(() => ["All","Kids","Adult","Folding"], []);
   const filtered = useMemo(() => filter==="All" ? BIKES : BIKES.filter(b=>b.cat===filter), [filter]);
   const spareCats = useMemo(() => [...new Set(SPARES.map(s=>s.cat))], []);
-  const handleNavigate = useCallback((newSection) => setSection(newSection), []);
+  const searchResults = useSearch(searchQuery);
+  const handleNavigate = useCallback((newSection) => { setSection(newSection); setSearchQuery(""); }, []);
 
   return (
     <div style={{fontFamily:"Georgia,'Times New Roman',serif",background:"#0a1209",minHeight:"100vh",color:"#f0ece2",display:"flex",flexDirection:"column"}}>
@@ -339,30 +394,62 @@ function App() {
           <div style={{padding:"40px 24px",maxWidth:1100,margin:"0 auto",animation:"fadeUp 0.6s ease"}}>
             <h2 style={{fontSize:28,fontWeight:700,color:"#f0ece2",marginBottom:6}}>Our Bicycles</h2>
             <p style={{color:"rgba(240,236,226,0.6)",marginBottom:24}}>All bikes in stock · WhatsApp to confirm availability</p>
-            <div style={{display:"flex",gap:8,marginBottom:28,flexWrap:"wrap"}}>
-              {cats.map(c=>(
-                <button key={c} className="filter-btn" onClick={()=>setFilter(c)} aria-pressed={filter===c} style={{background:filter===c?"#8B1A1A":"rgba(255,255,255,0.06)",color:filter===c?"#fff":"rgba(240,236,226,0.7)",border:`1px solid ${filter===c?"#8B1A1A":"rgba(255,255,255,0.12)"}`,padding:"7px 18px",borderRadius:8,cursor:"pointer",fontFamily:"Georgia,serif",fontSize:13,fontWeight:filter===c?700:400}}>
-                  {c}
-                </button>
-              ))}
-            </div>
-            <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(240px,1fr))",gap:18}}>
-              {filtered.map(b=><BikeCard key={b.id} bike={b}/>)}
-            </div>
+            <SearchBar query={searchQuery} setQuery={setSearchQuery} searchResults={searchResults} onSelectItem={(bike)=>{ setSearchQuery(""); window.scrollTo({top:0,behavior:"smooth"}); }}/>
+            {searchQuery ? (
+              <>
+                <h3 style={{fontSize:16,color:"#e8a0a0",marginBottom:16}}>Search Results for "{searchQuery}"</h3>
+                {searchResults.bikes.length > 0 ? (
+                  <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(240px,1fr))",gap:18}}>
+                    {searchResults.bikes.map(b=><BikeCard key={b.id} bike={b}/>)}
+                  </div>
+                ) : (
+                  <div style={{textAlign:"center",padding:"40px 24px",color:"rgba(240,236,226,0.5)"}}>No bikes match your search</div>
+                )}
+              </>
+            ) : (
+              <>
+                <div style={{display:"flex",gap:8,marginBottom:28,flexWrap:"wrap"}}>
+                  {cats.map(c=>(
+                    <button key={c} className="filter-btn" onClick={()=>setFilter(c)} aria-pressed={filter===c} style={{background:filter===c?"#8B1A1A":"rgba(255,255,255,0.06)",color:filter===c?"#fff":"rgba(240,236,226,0.7)",border:`1px solid ${filter===c?"#8B1A1A":"rgba(255,255,255,0.12)"}`,padding:"7px 18px",borderRadius:8,cursor:"pointer",fontFamily:"Georgia,serif",fontSize:13,fontWeight:filter===c?700:400}}>
+                      {c}
+                    </button>
+                  ))}
+                </div>
+                <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(240px,1fr))",gap:18}}>
+                  {filtered.map(b=><BikeCard key={b.id} bike={b}/>)}
+                </div>
+              </>
+            )}
           </div>
         )}
         {section==="spares" && (
           <div style={{padding:"40px 24px",maxWidth:900,margin:"0 auto",animation:"fadeUp 0.6s ease"}}>
             <h2 style={{fontSize:28,fontWeight:700,color:"#f0ece2",marginBottom:6}}>Spare Parts & Accessories</h2>
-            <p style={{color:"rgba(240,236,226,0.6)",marginBottom:32}}>Wide range in stock · WhatsApp for specific enquiries</p>
-            {spareCats.map(cat=>(
-              <div key={cat} style={{marginBottom:22}}>
-                <div style={{fontSize:11,letterSpacing:3,color:"#8B1A1A",textTransform:"uppercase",marginBottom:8,fontWeight:700}}>{cat}</div>
-                <div style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:12,overflow:"hidden"}}>
-                  {SPARES.filter(s=>s.cat===cat).map((s,i,arr)=><SpareRow key={i} spare={s} isLast={i===arr.length-1}/>)}
-                </div>
-              </div>
-            ))}
+            <p style={{color:"rgba(240,236,226,0.6)",marginBottom:24}}>Wide range in stock · WhatsApp for specific enquiries</p>
+            <SearchBar query={searchQuery} setQuery={setSearchQuery} searchResults={searchResults} onSelectItem={()=>setSearchQuery("")}/>
+            {searchQuery ? (
+              <>
+                <h3 style={{fontSize:16,color:"#e8a0a0",marginBottom:16}}>Search Results for "{searchQuery}"</h3>
+                {searchResults.spares.length > 0 ? (
+                  <div style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:12,overflow:"hidden"}}>
+                    {searchResults.spares.map((s,i,arr)=><SpareRow key={i} spare={s} isLast={i===arr.length-1}/>)}
+                  </div>
+                ) : (
+                  <div style={{textAlign:"center",padding:"40px 24px",color:"rgba(240,236,226,0.5)"}}>No spare parts match your search</div>
+                )}
+              </>
+            ) : (
+              <>
+                {spareCats.map(cat=>(
+                  <div key={cat} style={{marginBottom:22}}>
+                    <div style={{fontSize:11,letterSpacing:3,color:"#8B1A1A",textTransform:"uppercase",marginBottom:8,fontWeight:700}}>{cat}</div>
+                    <div style={{background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:12,overflow:"hidden"}}>
+                      {SPARES.filter(s=>s.cat===cat).map((s,i,arr)=><SpareRow key={i} spare={s} isLast={i===arr.length-1}/>)}
+                    </div>
+                  </div>
+                ))}
+              </>
+            )}
             <div style={{marginTop:20,padding:18,background:"rgba(139,26,26,0.1)",border:"1px solid rgba(139,26,26,0.25)",borderRadius:12,textAlign:"center"}}>
               <p style={{color:"rgba(240,236,226,0.8)",marginBottom:12,fontSize:14}}>Need a part not listed? We likely have it!</p>
               <a href={WHATSAPP} target="_blank" rel="noopener noreferrer" style={{background:"#25D366",color:"#fff",padding:"9px 22px",borderRadius:8,fontSize:13,fontWeight:700,display:"inline-block",transition:"transform 0.2s"}}>💬 Ask on WhatsApp</a>
